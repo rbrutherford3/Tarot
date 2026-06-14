@@ -12,6 +12,8 @@ html {
 
 h1 {
     margin-left: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 h2, a {
@@ -22,7 +24,12 @@ h2, a {
     margin: .5vw;
 }
 
+#reversed {
+    margin-left: 5px;
+}
+
 #pulled {
+    margin-top: 10px;
     min-height: 165px;
 }
 

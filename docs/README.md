@@ -8,7 +8,7 @@ Go to [https://touchytarot.vercel.app/](https://touchytarot.vercel.app/) for a w
 
 ## Background
 
-I personally do Tarot, and I went through a phase where I was seeking out various Tarot sites and I simply didn't trust whatever AI or random number generator was being used, so I created my own. I was intrigued by the idea of using 100% human input in the card shuffle, so the user could feel like they were actually shuffling the deck themselves. After playing around some, I came up with the idea of using click/tap and drag motions, combined with the time stamp for each point in the drag to create a random card selection.
+I personally do Tarot, and I went through a phase where I was seeking out various Tarot sites and I simply didn't trust whatever AI or random number generator was being used, so I created my own. I was intrigued by the idea of using 100% human input in the card shuffle, so the user could feel like they were actually shuffling the deck themselves. After playing around some, I came up with the idea of using click/tap and drag motions, combined with the time stamp for each point in the drag to create a random card selection. Only the time stamp determines whether the card is reversed or not.
 
 ## Install
 
@@ -19,7 +19,7 @@ git clone https://github.com/rbrutherford3/Tarot.git
 
 ## Usage
 
-The site opens with a prompt to tap and drag (or click and drag if using a mouse) randomly until the cards are shuffled. After that is done, the cards are laid out face down in the hidden order that the shuffle occured. The user need only pick cards (as many as are pertinent for their reading) and they will be revealed at the top.
+The site opens with a prompt to tap and drag (or click and drag if using a mouse) randomly until the cards are shuffled. After that is done, the cards are laid out face down in the hidden order that the shuffle occured. The user need only pick cards (as many as are pertinent for their reading) and they will be revealed at the top. The user may also choose to reveal the orientation of the cards if desired.
 
 ## Contributing
 

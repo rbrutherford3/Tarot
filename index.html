@@ -14,6 +14,10 @@
 </head>
 <body>
     <h1 id="header">Tap and drag or click and drag to shuffle!</h1>
+    <div id="reversed" style="display: none;">
+        <input type="checkbox" id="reversedCheckBox">
+        <label for="reversedCheckBox" id="reversedLabel">Show Reversed</label>
+    </div>
     <div id="pulled"></div>
     <div id="shuffled"></div> 
     <div id="backdrop"></div>
@@ -34,6 +38,9 @@
 
     // Grab HTML elements
     const header = document.getElementById("header");
+    const reversed = document.getElementById("reversed");
+    const reversedCheckBox = document.getElementById("reversedCheckBox");
+    const reversedLabel = document.getElementById("reversedLabel");
     const pulled = document.getElementById("pulled");
     const shuffled = document.getElementById("shuffled");
     const backdrop = document.getElementById("backdrop");
@@ -48,8 +55,10 @@
 
         // Crude formula, but it works
         var endTime = Date.now();
-        var rand = x + y + endTime - startTime + 1; 
+        var timeDiff = endTime - startTime
+        var rand = x + y + timeDiff + 1; 
         var cardIndex = Math.floor(rand % numCards);
+        var cardUpright = Boolean(Math.floor(timeDiff % 2));
 
         // Grab the card information from the JSON object
         var cardName = deck.cards[cardIndex].name;
@@ -63,6 +72,7 @@
         card.setAttribute("data-name", cardName)
         card.setAttribute("image-path", cardImage);
         card.setAttribute("onclick", "reveal(" + index  + ")");
+        card.setAttribute("data-upright", cardUpright);
 
         // Move card from deck to shuffled pile
         shuffled.appendChild(card);
@@ -76,6 +86,7 @@
     // Unhide divs for shuffled and pulled cards (after shuffle is complete)
     function showCards() {
         shuffled.style.setProperty("display", "block");
+        reversed.style.setProperty("display", "block");
         pulled.style.setProperty("display", "block");
         header.textContent = "Select a card!";
         document.body.style.setProperty("overscroll-behavior-y", "auto");
@@ -94,12 +105,14 @@
         clone.title = card.getAttribute("data-name");
         var imagePath = card.getAttribute("image-path");
         clone.style.setProperty("background-image", `url(\"cards/${imagePath}\")`);
+        if ((card.getAttribute("data-upright") ==  "false") && reversedCheckBox.checked)
+            clone.style.transform = "rotate(180deg)";
         clone.style.setProperty("margin", "5px 5px 5px 5px");
         clone.style.setProperty("cursor", "auto");
 
         // Change function of onclick action to zoom in on card
         clone.removeAttribute("onclick");
-        clone.setAttribute("onclick", "pick('" + imagePath + "', '" + clone.title + "', event);",)
+        clone.setAttribute("onclick", "pick('" + imagePath + "', '" + clone.title + "', '" + card.getAttribute("data-upright") + "', event);",)
 
         // Add the flipped card to the pulled area, remove from shuffled area
         pulled.appendChild(clone);
@@ -107,17 +120,24 @@
     }
 
     // Show zoomed-in version of card
-    function pick(imagePath, cardTitle, e) {
+    function pick(imagePath, cardTitle, orientation, e) {
         container.style.setProperty("display", "block");
         window.scrollTo(0, 0);
         picked.style.setProperty("background-image", `url(\"cards/${imagePath}\")`);
+        picked.style.transform = "none";
+        if ((orientation == "false") && reversedCheckBox.checked)
+            picked.style.transform = "rotate(180deg)";
         picked.style.setProperty("display", "block");
         card_name.style.setProperty("display", "block");
         card_link.style.setProperty("display", "block");
         backdrop.style.setProperty("display", "block");
         picked.setAttribute("onclick", "unpick(event);");
         backdrop.setAttribute("onclick", "unpick(event);");
-        card_name.textContent = cardTitle;
+        if ((orientation == "false") && reversedCheckBox.checked)
+            orientationText = " (reversed)";
+        else
+            orientationText = "";
+        card_name.textContent = cardTitle + orientationText;
         var query = cardTitle.replaceAll(" ", "+") + "+tarot+card";
         card_link.innerHTML = '<a href="https://www.google.com/search?q=' + query + '" target="_blank">' + card_link.textContent + '</a>';
     }
@@ -151,6 +171,21 @@
 
     // Event handlers. Grab coordinates and call the above functions
 
+    // If the reversed checkbox button is checked or unchecked, make sure that the pulled cards are oriented properly
+    function orientPulledCards(e) {
+        var showReversed = reversedCheckBox.checked;
+
+        let child = pulled.firstElementChild;
+
+        while (child) {
+            child.style.transform = "none";
+            var childUpright = child.getAttribute("data-upright") == "true";
+            if (!childUpright && showReversed)
+                child.style.transform = "rotate(180deg)";
+            child = child.nextElementSibling;
+        }
+    }
+
     function getXYmouse(e) {
         var x = e.clientX;
         var y = e.clientY;
@@ -177,6 +212,9 @@
     }
 
     // Set up event listeners
+
+    // Reverse card checkbox listenders
+    reversedCheckBox.addEventListener("change", orientPulledCards);
 
     // Desktop events
     document.addEventListener("mousedown", handleStart);
