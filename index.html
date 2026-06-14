@@ -13,7 +13,8 @@
     <link rel="manifest" href="/favicon/site.webmanifest" />
 </head>
 <body>
-    <h1 id="header">Tap and drag or click and drag to shuffle!</h1>
+    <h1 id="header">Tap and drag or click and drag to shuffle your tarot deck!</h1>
+    <p id="briefing">This is an authentic shuffle. It is all you. There is no artificial intelligence. There are no computer-based random number generators. It uses the location of your click or press on the screen combined with the time it was pressed to mix the deck. It is also open source, so you can see for yourself how it works. Shuffle away!</p>
     <div id="reversed" style="display: none;">
         <input type="checkbox" id="reversedCheckBox">
         <label for="reversedCheckBox" id="reversedLabel">Show Reversed</label>
@@ -38,6 +39,7 @@
 
     // Grab HTML elements
     const header = document.getElementById("header");
+    const briefing = document.getElementById("briefing");
     const reversed = document.getElementById("reversed");
     const reversedCheckBox = document.getElementById("reversedCheckBox");
     const reversedLabel = document.getElementById("reversedLabel");
@@ -85,6 +87,7 @@
 
     // Unhide divs for shuffled and pulled cards (after shuffle is complete)
     function showCards() {
+        briefing.style.setProperty("display", "none");
         shuffled.style.setProperty("display", "block");
         reversed.style.setProperty("display", "block");
         pulled.style.setProperty("display", "block");
