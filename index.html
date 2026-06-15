@@ -111,7 +111,7 @@
         // Pull the card and flip it (show face of card, etc)
         clone.title = card.getAttribute("data-name");
         var imagePath = card.getAttribute("image-path");
-        clone.style.setProperty("background-image", `url(\"cards/${imagePath}\")`);
+        clone.style.setProperty("background-image", `url(\"cards/small/${imagePath}\")`);
         if ((card.getAttribute("data-upright") ==  "false") && reversedCheckBox.checked)
             clone.style.transform = "rotate(180deg)";
         clone.style.setProperty("margin", "5px 5px 5px 5px");
@@ -130,7 +130,7 @@
     function pick(imagePath, cardTitle, orientation, e) {
         container.style.setProperty("display", "block");
         window.scrollTo(0, 0);
-        picked.style.setProperty("background-image", `url(\"cards/${imagePath}\")`);
+        picked.style.setProperty("background-image", `url(\"cards/large/${imagePath}\")`);
         picked.style.transform = "none";
         if ((orientation == "false") && reversedCheckBox.checked)
             picked.style.transform = "rotate(180deg)";
