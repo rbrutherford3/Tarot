@@ -1,6 +1,6 @@
 body {
-    background-color:#343434;
-    color: #9c9c9c;
+    background-color:#1f1f1f;
+    color: #cccccc;
     font-family: sans-serif;
     user-select: none; /* To prevent highlighting text while shuffling */
     overscroll-behavior-y: none;
@@ -11,7 +11,6 @@ html {
 }
 
 h1 {
-    color: #f7f7f7;
     margin-left: 5px;
     margin-bottom: 5px;
     margin-top: 5px;
@@ -59,7 +58,8 @@ h2, a {
     display: inline-block;
     height: 145px;
     width: 85px;
-    border: 3px solid black;
+    border: 2px solid black;
+    border-radius: 5px;
     margin: 5px -80px 5px 5px; /* negative margin to stack the cards */
     font-size: 12px;
 }
