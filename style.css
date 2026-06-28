@@ -41,10 +41,12 @@ h2, a {
 }
 
 #reversed {
+    display: none;
     text-align: center;
 }
 
 #pulled {
+    display: none;
     margin-top: 10px;
     min-height: 165px;
 }
@@ -112,4 +114,12 @@ h2, a {
     margin-top: 10px;
     margin-bottom: 10px;
     pointer-events: none;
+}
+
+.hide {
+    display: none;
+}
+
+.show {
+    display: block;
 }
