@@ -173,11 +173,12 @@
         }
         else {
             showCards();
-            document.removeEventListener("click", getXYmouse);
-            document.removeEventListener("mousedown", handleStart);
-            document.removeEventListener("mousemove", handleMove);
-            document.removeEventListener("mouseup", handleEnd);
-            document.removeEventListener("touchmove", getXYtouch);
+            document.removeEventListener("mousedown", handleMouseStart);
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseEnd);
+            document.removeEventListener("touchstart", handleTouchStart);
+            document.removeEventListener("touchmove", handleTouchMove);
+            document.removeEventListener("touchend", handleTouchEnd);
         }
     }
 
@@ -198,6 +199,16 @@
         }
     }
 
+    var isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    var isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    var isTablet = isTouchDevice && window.innerWidth >= 768;
+    var minDrawInterval = isTablet ? 50 : (isTouchDevice ? 45 : 70);
+    var minDrawDistance = isTablet ? 35 : (isTouchDevice ? 28 : 10);
+    var lastDrawTime = 0;
+    var lastDrawX = 0;
+    var lastDrawY = 0;
+    var isDragging = false;
+
     function getXYmouse(e) {
         var x = e.clientX;
         var y = e.clientY;
@@ -205,22 +216,54 @@
     }
 
     function getXYtouch(e) {
-        var x = e.touches[0].clientX;
-        var y = e.touches[0].clientY;
+        var touch = e.touches[0];
+        var x = touch.clientX;
+        var y = touch.clientY;
         shuffle(x, y);
     }
 
-    function handleStart(e) {
+    function handleMouseStart(e) {
         isDragging = true;
         getXYmouse(e);
     }
 
-    function handleMove(e) {
-        if (isDragging)
-            getXYmouse(e);
+    function handleMouseMove(e) {
+        if (!isDragging) return;
+        var now = Date.now();
+        var dx = e.clientX - lastDrawX;
+        var dy = e.clientY - lastDrawY;
+        if (now - lastDrawTime < minDrawInterval) return;
+        if (Math.sqrt(dx*dx + dy*dy) < minDrawDistance) return;
+        lastDrawTime = now;
+        lastDrawX = e.clientX;
+        lastDrawY = e.clientY;
+        getXYmouse(e);
     }
 
-    function handleEnd() {
+    function handleMouseEnd() {
+        isDragging = false;
+    }
+
+    function handleTouchStart(e) {
+        isDragging = true;
+        getXYtouch(e);
+    }
+
+    function handleTouchMove(e) {
+        if (!isDragging) return;
+        var now = Date.now();
+        var touch = e.touches[0];
+        var dx = touch.clientX - lastDrawX;
+        var dy = touch.clientY - lastDrawY;
+        if (now - lastDrawTime < minDrawInterval) return;
+        if (Math.sqrt(dx*dx + dy*dy) < minDrawDistance) return;
+        lastDrawTime = now;
+        lastDrawX = touch.clientX;
+        lastDrawY = touch.clientY;
+        getXYtouch(e);
+    }
+
+    function handleTouchEnd() {
         isDragging = false;
     }
 
@@ -230,11 +273,13 @@
     reversedCheckBox.addEventListener("change", orientPulledCards);
 
     // Desktop events
-    document.addEventListener("mousedown", handleStart);
-    document.addEventListener("mousemove", handleMove);
-    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("mousedown", handleMouseStart);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseEnd);
 
     // Mobile events
-    document.addEventListener("touchmove", getXYtouch);
+    document.addEventListener("touchstart", handleTouchStart);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleTouchEnd);
 </script>
 </html>
