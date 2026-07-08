@@ -38,6 +38,7 @@
     var deck = JSON.parse(tarotImages);
     const deckSize = 78;
     var numCards = deckSize;
+    var zIndex = deckSize;
     var index = 0;
     var isDragging = false;
     var startTime = Date.now();
@@ -85,21 +86,31 @@
         card.addEventListener("click", (e) => reveal(e));
 
         // Move card from deck to shuffled pile
+        card.style.setProperty("z-index", zIndex);
+        zIndex--;
         shuffled.appendChild(card);
         deck.cards.splice(cardIndex, 1);
 
         // Update counters
         numCards--;
         index++;
+
+        card.addEventListener("mouseover"  , () => {
+            card.style.transform = "translateY(-20px)";
+        });
+
+        card.addEventListener("mouseout"  , () => {
+            card.style.transform = "translateY(0px)";
+        });
     }
 
     // Unhide divs for shuffled and pulled cards (after shuffle is complete)
     function showCards() {
         briefing.style.setProperty("display", "none");
-        shuffled.style.setProperty("display", "block");
+        shuffled.style.setProperty("display", "flex");
         icon.style.setProperty("display", "none");
         reversed.style.setProperty("display", "block");
-        pulled.style.setProperty("display", "block");
+        pulled.style.setProperty("display", "flex");
         header.textContent = "Select a card";
         document.body.style.setProperty("overscroll-behavior-y", "auto");
         document.documentElement.style.setProperty("overscroll-behavior-y", "auto");
@@ -117,14 +128,27 @@
         var card = e.target;
         var clone = card.cloneNode(true);
 
+        // Remove the pull visualization of the card
+        clone.style.transform = "translateY(0px)";
+
         // Pull the card and flip it (show face of card, etc)
         clone.title = card.getAttribute("data-name");
         var imagePath = card.getAttribute("image-path");
         clone.style.setProperty("background-image", `url(\"cards/small/${imagePath}\")`);
-        if ((card.getAttribute("data-upright") ==  "false") && reversedCheckBox.checked)
-            clone.style.transform = "rotate(180deg)";
         clone.style.setProperty("margin", "5px 5px 5px 5px");
-        clone.style.setProperty("cursor", "auto");
+
+        // Remove the translation events
+        clone.removeEventListener("mouseover"  , () => {
+            clone.style.transform = "translateY(-20px)";
+        });
+
+        clone.removeEventListener("mouseout"  , () => {
+            clone.style.transform = "translateY(0px)";
+        });
+
+        // Rotate the card if it is reversed and the checkbox is checked
+        if (clone.getAttribute("data-upright") == "false" && reversedCheckBox.checked)
+            clone.style.transform = "rotate(180deg)";
 
         // Add events to show the card when clicked
         clone.addEventListener("click", () => pick(imagePath, clone.title, card.getAttribute("data-upright")));
@@ -140,6 +164,7 @@
         window.scrollTo(0, 0);
         picked.style.setProperty("background-image", `url(\"cards/large/${imagePath}\")`);
         picked.style.transform = "none";
+        picked.style.setProperty("z-index", "1000");
         if ((orientation == "false") && reversedCheckBox.checked)
             picked.style.transform = "rotate(180deg)";
         picked.style.setProperty("display", "block");
