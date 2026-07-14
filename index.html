@@ -59,6 +59,14 @@
     var card_link = document.getElementById("card_link");
     card_link.textContent = "Find more info on Google";
 
+    function cardUp(e) {
+        e.target.style.transform = "translateY(-20px)";
+    }
+
+    function cardDown(e) {
+        e.target.style.transform = "translateY(0px)";
+    }
+
     // Use the mouse/finger coordinates and the time to create an authentically random card selection
     function pickCard(x, y) {
 
@@ -95,13 +103,8 @@
         numCards--;
         index++;
 
-        card.addEventListener("mouseover"  , () => {
-            card.style.transform = "translateY(-20px)";
-        });
-
-        card.addEventListener("mouseout"  , () => {
-            card.style.transform = "translateY(0px)";
-        });
+        card.addEventListener("mouseover", cardUp);
+        card.addEventListener("mouseout", cardDown);
     }
 
     // Unhide divs for shuffled and pulled cards (after shuffle is complete)
@@ -126,7 +129,13 @@
 
         // Copy the card
         var card = e.target;
+
+        // Remove the translation events
+        card.removeEventListener("mouseover", cardUp);
+        card.removeEventListener("mouseout", cardDown);
+
         var clone = card.cloneNode(true);
+        clone.style.setProperty("visibility", "hidden");
 
         // Remove the pull visualization of the card
         clone.style.transform = "translateY(0px)";
@@ -137,15 +146,6 @@
         clone.style.setProperty("background-image", `url(\"cards/small/${imagePath}\")`);
         clone.style.setProperty("margin", "5px 5px 5px 5px");
 
-        // Remove the translation events
-        clone.removeEventListener("mouseover"  , () => {
-            clone.style.transform = "translateY(-20px)";
-        });
-
-        clone.removeEventListener("mouseout"  , () => {
-            clone.style.transform = "translateY(0px)";
-        });
-
         // Rotate the card if it is reversed and the checkbox is checked
         if (clone.getAttribute("data-upright") == "false" && reversedCheckBox.checked)
             clone.style.transform = "rotate(180deg)";
@@ -155,7 +155,31 @@
 
         // Add the flipped card to the pulled area, remove from shuffled area
         pulled.appendChild(clone);
-        card.style.setProperty("visibility", "hidden");
+
+        // Get current viewport bounding rectangles
+        var cardRect = card.getBoundingClientRect();
+        var cloneRect = clone.getBoundingClientRect();
+
+        // Get the active CSS matrix for the card's transform property
+        var style = window.getComputedStyle(card);
+        var matrix = new DOMMatrix(style.transform);
+
+        // Extract the current Y translation value (in pixels)
+        var yTranslation = matrix.m42; // or matrix.f
+
+        // Calculate the pixel difference between target and source
+        var xDiff = cloneRect.left - cardRect.left;
+        var yDiff = cloneRect.top - cardRect.top + yTranslation;
+
+        // When the transition is complete, hide the original card and show the clone
+        card.addEventListener("transitionend", () => {
+            clone.style.setProperty("visibility", "visible");
+            card.style.setProperty("visibility", "hidden");
+        }, { once: true });
+
+        // Apply the translation transformation
+        card.style.transform = `translate(${xDiff}px, ${yDiff}px)`;
+        card.style.transform = `margin: 5px 5px 5px 5px`;
     }
 
     // Show zoomed-in version of card
