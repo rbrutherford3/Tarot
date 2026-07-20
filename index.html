@@ -8,8 +8,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="tarot-images.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="/tarot-images.js"></script>
+    <link rel="stylesheet" href="/style.css">
     <title>Tarot Draw</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -26,11 +26,22 @@
     </div>
     <div id="pulled"></div>
     <div id="shuffled"></div>
-    <div id="backdrop"></div>
-    <div id="container">
-        <h2 id="card_name"></h2>
-        <div id="picked"></div>
-        <h2 id="card_link"></h2>
+    <div id="overlay">
+        <div id="container">
+            <div id="close_button_row">
+                <div id="close_button_container">
+                    <div id="close_button_text">CLOSE</div>
+                    <button id="close_button" aria-label="Close">&times;</button>
+                </div>
+            </div>
+            <div id="card_name">
+                <h2 id="card_name_text"></h2>
+                <img id="picked" alt="">
+                <div id="card_link">
+                    <h2 id="card_link_text"></h2>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 <script>
@@ -52,12 +63,18 @@
     var reversedLabel = document.getElementById("reversedLabel");
     var pulled = document.getElementById("pulled");
     var shuffled = document.getElementById("shuffled");
-    var backdrop = document.getElementById("backdrop");
+    var overlay = document.getElementById("overlay");
     var container = document.getElementById("container");
     var picked = document.getElementById("picked");
     var card_name = document.getElementById("card_name");
+    var card_name_text = document.getElementById("card_name_text");
+    var close_button_row = document.getElementById("close_button_row");
+    var close_button_container = document.getElementById("close_button_container");
+    var close_button_text = document.getElementById("close_button_text");
+    var close_button = document.getElementById("close_button");
     var card_link = document.getElementById("card_link");
-    card_link.textContent = "Find more info on Google";
+    var card_link_text = document.getElementById("card_link_text");
+    card_link_text.textContent = "Find more info on Google";
 
     function cardUp(e) {
         e.target.style.transform = "translateY(-20px)";
@@ -120,8 +137,7 @@
         document.body.style.setProperty("user-select", "auto");
 
         // Hide cards when clicking anywhere on screen
-        picked.addEventListener("click", () => unpick());
-        backdrop.addEventListener("click", () => unpick());
+        close_button_container.addEventListener("click", (e) => unpick(e));
     };
 
     // Show a shuffled card (move from shuffled div to pulled div)
@@ -184,34 +200,68 @@
 
     // Show zoomed-in version of card
     function pick(imagePath, cardTitle, orientation) {
-        container.style.setProperty("display", "block");
-        window.scrollTo(0, 0);
-        picked.style.setProperty("background-image", `url(\"cards/large/${imagePath}\")`);
+        overlay.style.setProperty("display", "flex");
+        picked.src = "cards/large/" + imagePath;
         picked.style.transform = "none";
         picked.style.setProperty("z-index", "1000");
         if ((orientation == "false") && reversedCheckBox.checked)
             picked.style.transform = "rotate(180deg)";
-        picked.style.setProperty("display", "block");
-        card_name.style.setProperty("display", "block");
-        card_link.style.setProperty("display", "block");
-        backdrop.style.setProperty("display", "block");
         var orientationText = "";
         if ((orientation == "false") && reversedCheckBox.checked)
             orientationText = " (reversed)";
-        card_name.textContent = cardTitle + orientationText;
+        card_name_text.textContent = cardTitle + orientationText;
         var googleUrl = new URL('https://www.google.com/search');
         var rawQuery = cardTitle + ' tarot card';
         googleUrl.searchParams.set('q', rawQuery);
-        card_link.innerHTML = '<a href="' + googleUrl.toString() + '" target="_blank">' + card_link.textContent + '</a>';
+        card_link_text.innerHTML = '<a href="' + googleUrl.toString() + '" target="_blank">' + card_link_text.textContent + '</a>';
+        disableScroll();
     }
 
     // Hide zoomed-in version of card (by tapping/clicking it it)
-    function unpick() {
-        picked.style.setProperty("display", "none");
-        backdrop.style.setProperty("display", "none");
-        card_name.style.setProperty("display", "none");
-        card_link.style.setProperty("display", "none");
+    function unpick(e) {
+        overlay.style.setProperty("display", "none");
+        enableScroll();
     }
+
+    // Lock scrolling WITHOUT changing the layout (no overflow/scrollbar toggle,
+    // so the body width stays constant and the centered #header never shifts).
+    // Scrollbars remain visible but inert by intercepting scroll input.
+    function disableScroll () {
+        var scrollY = window.scrollY;
+        var scrollX = window.scrollX;
+        document.body.dataset.scrollY = scrollY;
+        document.body.dataset.scrollX = scrollX;
+
+        document.body.style.touchAction = 'none';
+        window.addEventListener('wheel', preventDefault, { passive: false });
+        window.addEventListener('touchmove', preventDefault, { passive: false });
+        window.addEventListener('keydown', preventScrollKeys, { passive: false });
+    };
+
+    function enableScroll () {
+        var scrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+        var scrollX = parseInt(document.body.dataset.scrollX || '0', 10);
+
+        document.body.style.touchAction = '';
+        window.removeEventListener('wheel', preventDefault);
+        window.removeEventListener('touchmove', preventDefault);
+        window.removeEventListener('keydown', preventScrollKeys);
+
+        window.scrollTo(scrollX, scrollY);
+    };
+
+    // Helper function to block native device movement
+    function preventDefault (e) {
+        e.preventDefault();
+    };
+
+    // Block keyboard scrolling (arrows, space, page up/down, home, end)
+    function preventScrollKeys (e) {
+        var scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+        if (scrollKeys.indexOf(e.keyCode) > -1) {
+            e.preventDefault();
+        }
+    };
 
     // Pick a "random" card until there are no more
     function shuffle(x, y) {
