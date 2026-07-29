@@ -89,7 +89,7 @@
         document.documentElement.style.setProperty("overscroll-behavior-y", "auto");
         document.body.style.setProperty("user-select", "auto");
 
-        // Hide cards when clicking anywhere on screen
+        // Enable overlay close button
         close_button_container.addEventListener("click", (e) => unpick(e));
     };
 
@@ -333,3 +333,4 @@
     document.addEventListener("touchstart", handleTouchStart);
     document.addEventListener("touchmove", handleTouchMove);
     document.addEventListener("touchend", handleTouchEnd);
+    

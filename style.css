@@ -1,72 +1,71 @@
+html, body {
+    overscroll-behavior-y: none;
+}
+
 body {
-    background-color:#1f1f1f;
+    background-color: #1f1f1f;
     color: #cccccc;
     font-family: sans-serif;
     user-select: none; /* To prevent highlighting text while shuffling */
-    overscroll-behavior-y: none;
     max-width: 1200px;
 }
 
-html {
-    overscroll-behavior-y: none;
-}
-
+/* Typography */
 h1 {
     font-size: larger;
     color: #f7f7f7;
     text-align: center;
-    margin-left: 5px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+    margin: 5px;
     user-select: none;
 }
 
 p {
-    margin-left: 5px;
-    margin-bottom: 5px;
-    margin-top: 5px;
+    margin: 5px;
     line-height: 1.5;
+}
+
+h2,
+#card_link_text a {
+    color: #f7f7f7;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    margin: 0.5vw;
 }
 
 #briefing {
     user-select: none;
 }
 
-h2, a {
-    color: #f7f7f7;
-    text-align: center;
-    position: relative;
-    z-index: 2;
-    margin: .5vw;
-}
-
+/* Shuffle / card display areas */
 #reversed {
     display: none;
     text-align: center;
 }
 
-#pulled {
+#pulled,
+#shuffled {
     display: none;
-    flex-wrap: wrap;             /* Wraps items into multiple rows */
+    flex-wrap: wrap;
     align-content: flex-end;
+}
+
+#pulled {
     margin-top: 10px;
     min-height: 165px;
 }
 
 #shuffled {
-    width: calc(100% - 85px); /* To compensate for negative margin */
-    display: none;
-    flex-wrap: wrap;             /* Wraps items into multiple rows */
-    row-gap: 20px;                /* Space between rows */
+    width: calc(100% - 85px); /* Compensate for card overlap */
     margin-top: 20px;
-    align-content: flex-end;
-    
+    row-gap: 20px;
 }
 
+/* Tarot card styling */
 .card {
     cursor: pointer;
     background-size: contain;
-    background-color:firebrick;
+    background-color: firebrick;
     vertical-align: text-top;
     display: inline-block;
     height: 145px;
@@ -79,6 +78,7 @@ h2, a {
     transition: transform 0.2s ease;
 }
 
+/* Modal / overlay styling */
 #overlay {
     width: 100%;
     height: 100%;
@@ -107,7 +107,8 @@ h2, a {
     max-height: 600px;
 }
 
-#picked, #card_link {
+#picked,
+#card_link {
     position: relative;
     z-index: 2000;
 }
@@ -117,8 +118,8 @@ h2, a {
     max-width: 100%;
     width: auto;
     height: auto;
-    flex-shrink:1;
-    min-height:0;
+    flex-shrink: 1;
+    min-height: 0;
     margin: 10px auto;
     border-radius: 7px;
 }
@@ -129,7 +130,7 @@ h2, a {
     align-items: center;
     justify-content: center;
     flex: 1 1 auto;
-    min-height:0;
+    min-height: 0;
     width: 100%;
     margin-bottom: 10px;
 }
@@ -157,7 +158,7 @@ h2, a {
     align-items: center;
     width: fit-content;
     cursor: pointer;
-    padding: 0 5px 0 5px;
+    padding: 0 5px;
 }
 
 #close_button_text {
@@ -177,23 +178,12 @@ h2, a {
     padding: 0;
     cursor: pointer;
 }
-  
+
 #icon {
     width: 50vw;
     max-width: max-content;
     max-height: max-content;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px auto;
     pointer-events: none;
-}
-
-.hide {
-    display: none;
-}
-
-.show {
-    display: block;
 }
