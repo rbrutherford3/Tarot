@@ -22,8 +22,10 @@
     <img id="icon" src="icon.png">
     <p id="briefing">This is an authentic shuffle. It is all you. There is no artificial intelligence. There are no computer-based random number generators. It uses the location of your click or press on the screen combined with the time it was pressed to mix the deck. It is also open source, so you can see for yourself how it works. Shuffle away!</p>
     <div id="reversed">
-        <input type="checkbox" id="reversedCheckBox">
-        <label for="reversedCheckBox" id="reversedLabel">Show Reversed</label>
+        <input type="radio" id="uprightRadioButton" name="reversed">
+        <label for="uprightRadioButton" id="uprightLabel">Upright Only</label>
+        <input type="radio" id="reversedRadioButton" name="reversed" checked>
+        <label for="reversedRadioButton" id="reversedLabel">Show Reversed</label>
     </div>
     <div id="pulled"></div>
     <div id="shuffled"></div>

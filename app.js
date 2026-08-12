@@ -12,7 +12,9 @@
     var briefing = document.getElementById("briefing");
     var icon = document.getElementById("icon");
     var reversed = document.getElementById("reversed");
-    var reversedCheckBox = document.getElementById("reversedCheckBox");
+    var uprightRadioButton = document.getElementById("uprightRadioButton");
+    var uprightLabel = document.getElementById("uprightLabel");
+    var reversedRadioButton = document.getElementById("reversedRadioButton");
     var reversedLabel = document.getElementById("reversedLabel");
     var pulled = document.getElementById("pulled");
     var shuffled = document.getElementById("shuffled");
@@ -116,7 +118,7 @@
         clone.style.setProperty("margin", "5px 5px 5px 5px");
 
         // Rotate the card if it is reversed and the checkbox is checked
-        if (clone.getAttribute("data-upright") == "false" && reversedCheckBox.checked)
+        if (clone.getAttribute("data-upright") == "false" && reversedRadioButton.checked)
             clone.style.transform = "rotate(180deg)";
 
         // Add events to show the card when clicked
@@ -157,10 +159,10 @@
         picked.src = "cards/large/" + imagePath;
         picked.style.transform = "none";
         picked.style.setProperty("z-index", "1000");
-        if ((orientation == "false") && reversedCheckBox.checked)
+        if ((orientation == "false") && reversedRadioButton.checked)
             picked.style.transform = "rotate(180deg)";
         var orientationText = "";
-        if ((orientation == "false") && reversedCheckBox.checked)
+        if ((orientation == "false") && reversedRadioButton.checked)
             orientationText = " (reversed)";
         card_name_text.textContent = cardTitle + orientationText;
         var googleUrl = new URL('https://www.google.com/search');
@@ -238,7 +240,7 @@
 
     // If the reversed checkbox button is checked or unchecked, make sure that the pulled cards are oriented properly
     function orientPulledCards(e) {
-        var showReversed = reversedCheckBox.checked;
+        var showReversed = reversedRadioButton.checked;
 
         var child = pulled.firstElementChild;
 
@@ -322,7 +324,8 @@
     // Set up event listeners
 
     // Reverse card checkbox listeners
-    reversedCheckBox.addEventListener("change", orientPulledCards);
+    reversedRadioButton.addEventListener("change", orientPulledCards);
+    uprightRadioButton.addEventListener("change", orientPulledCards);
 
     // Desktop events
     document.addEventListener("mousedown", handleMouseStart);

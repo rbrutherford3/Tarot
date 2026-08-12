@@ -62,7 +62,7 @@ h2,
 }
 
 /* Tarot card styling */
-.card {
+.card, .card-pulled {
     cursor: pointer;
     background-size: contain;
     background-color: firebrick;
@@ -72,10 +72,17 @@ h2,
     width: 85px;
     border: 2px solid black;
     border-radius: 5px;
-    margin: 5px -80px 5px 5px; /* negative margin to stack the cards */
     font-size: 12px;
     position: relative;
     transition: transform 0.2s ease;
+}
+
+.card {
+    margin: 5px -80px 5px 5px; /* negative margin to stack the cards */
+}
+
+.card-pulled {
+    margin: 5px;
 }
 
 /* Modal / overlay styling */
